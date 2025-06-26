@@ -1,133 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>MFA.GPT - Chat Interface</title>
+  <meta charset="UTF-8" />
+  <title>MFA.GPT - Chat</title>
   <style>
-    * {
-      margin: 0; padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    body {
-      display: flex;
-      height: 100vh;
-      background-color: #ffffff;
-      color: #000000;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { display: flex; height: 100vh; background: #fff; color: #000; }
     aside {
-      width: 250px;
-      background-color: #f0f0f0;
-      padding: 20px;
-      border-right: 1px solid #ccc;
+      width: 250px; background: #f0f0f0; padding: 20px; border-right: 1px solid #ccc;
     }
-
-    aside h2 {
-      color: #333;
-      margin-bottom: 20px;
-    }
-
-    .option {
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-
-    .option label {
-      display: block;
-      margin-bottom: 5px;
-      color: #666;
-    }
-
+    aside h2 { color: #333; margin-bottom: 20px; }
+    .option { margin-bottom: 15px; font-size: 14px; }
+    .option label { display: block; margin-bottom: 5px; color: #666; }
     .option input[type="color"] {
-      width: 100%;
-      height: 30px;
-      border: none;
-      border-radius: 5px;
+      width: 100%; height: 30px; border: none; border-radius: 5px;
     }
-
-    .option .info {
-      color: #000;
-    }
-
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
+    .option .info { color: #000; }
+    main { flex: 1; display: flex; flex-direction: column; }
     header {
-      background-color: #f8f8f8;
-      padding: 20px;
-      font-size: 1.6em;
-      color: #333;
-      font-weight: bold;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      background: #f8f8f8; padding: 20px; font-size: 1.6em; font-weight: bold;
+      color: #333; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-
     #chat {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: #ffffff;
+      flex: 1; overflow-y: auto; padding: 20px; background: #fff;
     }
-
     .msg {
-      margin: 12px 0;
-      max-width: 75%;
-      padding: 12px 16px;
-      border-radius: 15px;
-      line-height: 1.5;
-      word-wrap: break-word;
-      animation: fadeIn 0.3s ease-in;
+      margin: 12px 0; max-width: 75%; padding: 12px 16px;
+      border-radius: 15px; line-height: 1.5;
+      word-wrap: break-word; animation: fadeIn 0.3s ease-in;
     }
-
     .user {
-      background: #d1e7dd;
-      color: #000;
-      margin-left: auto;
-      text-align: right;
-      border-bottom-right-radius: 0;
+      background: #d1e7dd; color: #000; margin-left: auto;
+      text-align: right; border-bottom-right-radius: 0;
     }
-
     .bot {
-      background: #e2e3e5;
-      color: #000;
-      margin-right: auto;
-      text-align: left;
-      border-bottom-left-radius: 0;
+      background: #e2e3e5; color: #000; margin-right: auto;
+      text-align: left; border-bottom-left-radius: 0;
     }
-
     #inputArea {
-      display: flex;
-      padding: 15px;
-      background: #f8f8f8;
-      border-top: 1px solid #ccc;
+      display: flex; padding: 15px; background: #f8f8f8; border-top: 1px solid #ccc;
     }
-
     #userInput {
-      flex: 1;
-      padding: 12px;
-      font-size: 1em;
-      background: #f0f0f0;
-      border: 1px solid #ccc;
-      color: #000;
-      border-radius: 10px;
-      outline: none;
+      flex: 1; padding: 12px; font-size: 1em; background: #f0f0f0;
+      border: 1px solid #ccc; color: #000; border-radius: 10px; outline: none;
     }
-
     #sendBtn {
-      margin-left: 10px;
-      padding: 12px 20px;
-      font-weight: bold;
-      background: #333;
-      border: none;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
+      margin-left: 10px; padding: 12px 20px; font-weight: bold;
+      background: #333; border: none; color: white;
+      border-radius: 10px; cursor: pointer;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -169,39 +90,26 @@
     const dateEl = document.getElementById("date");
 
     function getBotResponse(input) {
-      const cleanInput = input.toLowerCase().trim();
+      const clean = input.toLowerCase().trim();
 
-      // Try evaluating basic math
-      try {
-        if (/^[0-9\s+\-*/().]+$/.test(cleanInput)) {
-          return "That equals " + eval(cleanInput);
-        }
-      } catch {}
-
-      // Basic keyword match
-      if (cleanInput.includes("hello") || cleanInput.includes("hi") || cleanInput.includes("hey")) {
-        return "Hello! How can I help you today?";
-      }
-      if (cleanInput.includes("how are you")) {
-        return "I'm good, thank you! Hope you're doing great too.";
-      }
-      if (cleanInput.includes("your name")) {
-        return "My name is MFA.GPT.";
-      }
-      if (cleanInput.includes("what is ai")) {
-        return "AI stands for Artificial Intelligence, which is used to create smart machines.";
-      }
-      if (cleanInput.includes("bye")) {
-        return "Goodbye! Have a great day!";
+      if (/^[\d\s+\-*/().]+$/.test(clean)) {
+        try { return "That equals " + eval(clean); } catch {}
       }
 
-      return "I'm still learning. Can you ask something else?";
+      if (clean.includes("hello") || clean.includes("hi")) return "Hello! How can I assist you?";
+      if (clean.includes("your name")) return "I'm MFA.GPT, your smart assistant.";
+      if (clean.includes("how are you")) return "I'm good, thanks! How about you?";
+      if (clean.includes("what is ai")) return "AI means Artificial Intelligence. It's used to make machines smart.";
+      if (clean.includes("bye")) return "Goodbye! Take care!";
+      if (clean.includes("creator")) return "I was created by Faizan using HTML, CSS and JavaScript.";
+
+      return "Sorry, I couldn't think of a reply.";
     }
 
-    function addMessage(message, sender) {
+    function addMessage(msg, sender) {
       const div = document.createElement("div");
       div.className = "msg " + sender;
-      div.innerHTML = message;
+      div.innerHTML = msg;
       chat.appendChild(div);
       chat.scrollTop = chat.scrollHeight;
     }
@@ -210,9 +118,9 @@
       const input = userInput.value.trim();
       if (!input) return;
       addMessage(`<strong>You:</strong> ${input}`, "user");
-      const response = getBotResponse(input);
+      const reply = getBotResponse(input);
       setTimeout(() => {
-        addMessage(`<strong>MFA.GPT:</strong> ${response}`, "bot");
+        addMessage(`<strong>MFA.GPT:</strong> ${reply}`, "bot");
       }, 400);
       userInput.value = "";
     }
