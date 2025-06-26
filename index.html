@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MFA.GPT - Chat</title>
+  <title>MFA.GPT - Online Chat</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { display: flex; height: 100vh; background: #fff; color: #000; }
@@ -89,21 +89,27 @@
     const timeEl = document.getElementById("time");
     const dateEl = document.getElementById("date");
 
-    function getBotResponse(input) {
-      const clean = input.toLowerCase().trim();
+    async function getGPTResponse(message) {
+      const apiKey = "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"; // ← YOUR API KEY HERE
+      const endpoint = "https://api.openai.com/v1/chat/completions";
 
-      if (/^[\d\s+\-*/().]+$/.test(clean)) {
-        try { return "That equals " + eval(clean); } catch {}
-      }
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: "You are MFA.GPT, a helpful and friendly AI assistant." },
+            { role: "user", content: message }
+          ]
+        })
+      });
 
-      if (clean.includes("hello") || clean.includes("hi")) return "Hello! How can I assist you?";
-      if (clean.includes("your name")) return "I'm MFA.GPT, your smart assistant.";
-      if (clean.includes("how are you")) return "I'm good, thanks! How about you?";
-      if (clean.includes("what is ai")) return "AI means Artificial Intelligence. It's used to make machines smart.";
-      if (clean.includes("bye")) return "Goodbye! Take care!";
-      if (clean.includes("creator")) return "I was created by Faizan using HTML, CSS and JavaScript.";
-
-      return "Sorry, I couldn't think of a reply.";
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || "Sorry, I couldn't reply.";
     }
 
     function addMessage(msg, sender) {
@@ -114,14 +120,19 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    function handleSend() {
+    async function handleSend() {
       const input = userInput.value.trim();
       if (!input) return;
+
       addMessage(`<strong>You:</strong> ${input}`, "user");
-      const reply = getBotResponse(input);
-      setTimeout(() => {
-        addMessage(`<strong>MFA.GPT:</strong> ${reply}`, "bot");
-      }, 400);
+      addMessage(`<strong>MFA.GPT:</strong> <em>typing...</em>`, "bot");
+
+      const allBotMessages = document.querySelectorAll(".bot");
+      const typingMessage = allBotMessages[allBotMessages.length - 1];
+
+      const reply = await getGPTResponse(input);
+      typingMessage.innerHTML = `<strong>MFA.GPT:</strong> ${reply}`;
+
       userInput.value = "";
     }
 
